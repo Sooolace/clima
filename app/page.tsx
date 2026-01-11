@@ -5,7 +5,7 @@ import SearchBar from '@/components/SearchBar'
 import WeatherCard from '@/components/WeatherCard'
 
 export default function Home() {
-  const [city, setCity] = useState('Digos City')
+  const [city, setCity] = useState('')
   const [weather, setWeather] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
