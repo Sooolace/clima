@@ -12,9 +12,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: 'API key not found' }, { status: 500 })
     }
 
-    const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${encodeURIComponent(
+    const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(
       city
-    )}&aqi=no`
+    )}&days=7&aqi=no&alerts=no`
 
     const response = await fetch(url)
     const data = await response.json()

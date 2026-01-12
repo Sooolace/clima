@@ -16,7 +16,7 @@ export default function WeatherCard({ data }: WeatherCardProps) {
   const { location, current } = data
 
   return (
-    <div className="mt-8 bg-white/10 backdrop-blur-md rounded-2xl p-6 max-w-md w-full shadow-lg text-center text-white">
+    <div className="p-6 max-w-md w-full text-center text-white">
       {/* City */}
       <h2 className="text-2xl md:text-3xl font-bold">
         {location.name}, {location.country}
