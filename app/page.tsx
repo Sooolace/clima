@@ -4,13 +4,29 @@ import { useState } from 'react'
 import SearchBar from '@/components/SearchBar'
 import WeatherCard from '@/components/WeatherCard'
 import Header from '@/components/Navbar';
-
+import { getWeatherBg } from './utils/getWeatherBg';
 
 export default function Home() {
   const [city, setCity] = useState('')
   const [weather, setWeather] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [lastCondition, setLastCondition] = useState('')
+const condition =
+  weather?.current?.condition?.text || lastCondition
+
+const bgClass = getWeatherBg(condition)
+
+const showClouds =
+  condition.toLowerCase().includes('cloud') ||
+  condition.toLowerCase().includes('cloudy') ||
+  condition.toLowerCase().includes('overcast')||
+  condition.toLowerCase().includes('clear')
+const showRain =
+  condition.toLowerCase().includes('rain') ||
+  condition.toLowerCase().includes('drizzle') ||
+  condition.toLowerCase().includes('shower')
+
 
   const fetchWeather = async (cityName: string) => {
     try {
@@ -25,6 +41,7 @@ export default function Home() {
       }
 
       setWeather(data)
+      setLastCondition(data.current.condition.text)
       setCity(cityName)
     } catch (err: any) {
       setError(err.message)
@@ -39,12 +56,18 @@ export default function Home() {
 
   return (
     
-<main className="min-h-screen bg-gradient-to-b from-blue-900 to-sky-600 flex flex-col items-center justify-center px-4 text-white">
+<main
+  className={`relative min-h-screen transition-all duration-700 ${bgClass} 
+    ${showClouds ? 'clouds' : ''} 
+    ${showRain ? 'rain' : ''} 
+    flex flex-col items-center justify-center px-4 text-white`}
+>
+
   <Header onSearch={fetchWeather} />
 
   <div className="w-full max-w-6xl mx-auto mt-8 flex flex-col lg:flex-row gap-8 items-start">
-    {/* left container */}
-    <div className="w-full lg:w-1/2 backdrop-blur-md bg-white/20 rounded-2xl p-6 shadow-xl">
+  
+      <div className="w-full lg:w-1/2 backdrop-blur-md bg-white/20 rounded-2xl p-6 shadow-xl">
       {/* center messages and avoid extra borders/background */}
       {loading && (
         <div className="mt-3 w-full flex items-center justify-center">
@@ -75,7 +98,7 @@ export default function Home() {
     <div className="w-full lg:w-1/2 backdrop-blur-md bg-white/20 rounded-2xl p-6 shadow-xl">
       <h3 className="mb-4 text-lg font-semibold">7-Day Forecast</h3>
 
-      {!weather && !loading && <p className="text-sm opacity-80">Forecast will appear here after a search.</p>}
+{!weather && !loading && <p className="text-sm opacity-80">Forecast will appear here after a search.</p>}
 
 {weather && weather.forecast?.forecastday && (
   <div className="grid grid-cols-7 gap-4 text-center text-white">

@@ -24,3 +24,79 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* CLOUD ANIMATION LAYER */
+.clouds::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/cloud.png') repeat-x;
+  background-size: cover;
+  opacity: 0.3;
+  animation: moveClouds 500s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes moveClouds {
+  from {
+    background-position-x: 0;
+  }
+  to {
+    background-position-x: 10000px;
+  }
+}
+
+.rain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/rainycloud.png') repeat-x;
+  background-size: cover;
+  opacity: 0.2;
+  animation: moveRain 500s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes moveRain {
+  from {
+    background-position-x: 0;
+  }
+  to {
+    background-position-x: 10000px;
+  }
+}
+/* CLEAR SKY */
+.bg-clear {
+  background: linear-gradient(180deg, #4facfe, #00f2fe);
+}
+
+/* CLOUDY */
+.bg-cloudy {
+  background: linear-gradient(180deg, #bdc3c7, #2c3e50);
+}
+
+/* RAINY */
+.bg-rainy {
+  background: linear-gradient(180deg, #4b79a1, #283e51);
+}
+
+/* STORM */
+.bg-storm {
+  background: linear-gradient(180deg, #232526, #414345);
+}
+
+/* DEFAULT */
+.bg-default {
+  background: linear-gradient(180deg, #1e3a8a, #020617);
+}
+
+.background-layer {
+  position: absolute;
+  inset: 0;
+  transition: opacity 1s ease-in-out;
+  z-index: -2; /* behind your content */
+}
+
+.clouds, .rain {
+  z-index: -1; /* overlays between content & background */
+}
