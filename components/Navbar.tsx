@@ -21,7 +21,7 @@ export default function Header({ onSearch }: HeaderProps) {
             <Link href="#about">About</Link>
           </li>
           <li>
-            <Link href="#contact">Contact</Link>
+            <Link href="https://kentllavado.vercel.app/#contact">Contact</Link>
           </li>
         </ul>
       </nav>

@@ -5,6 +5,10 @@ import SearchBar from '@/components/SearchBar'
 import WeatherCard from '@/components/WeatherCard'
 import Header from '@/components/Navbar';
 import { getWeatherBg } from './utils/getWeatherBg';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 export default function Home() {
   const [city, setCity] = useState('')
@@ -121,7 +125,7 @@ const showRain =
 <div className="relative z-10 w-full max-w-6xl mx-auto mt-8 flex flex-col lg:flex-row gap-8 items-stretch px-4">
 
     {/* left container (current weather) */}
-  <div className="w-full lg:w-1/2 h-full backdrop-blur-md bg-white/20 rounded-2xl p-6 shadow-xl">
+  <div className="w-full lg:w-1/2 h- backdrop-blur-md bg-white/20 rounded-2xl p-6 shadow-xl">
       {/* center messages and avoid extra borders/background */}
       {loading && (
         <div className="mt-3 w-full flex items-center justify-center">
@@ -148,9 +152,11 @@ const showRain =
       )}
     </div>
 
-    {/* right container (forecast) */}
-<div className="w-full lg:w-1/2 h-full backdrop-blur-md bg-white/20 rounded-2xl p-6 shadow-xl">
-      <h3 className="mb-4 text-lg font-semibold">7-Day Forecast</h3>
+    {/* right container */}
+<div className="w-full lg:w-1/2 flex flex-col gap-4">
+  {/* forecast half */}
+  <div className="flex-1 backdrop-blur-md bg-white/20 rounded-2xl p-6 shadow-xl">
+    <h3 className="mb-4 text-lg font-semibold">7-Day Forecast</h3>
 
 {!weather && !loading && <p className="text-sm opacity-80">Forecast will appear here after a search.</p>}
 
@@ -182,8 +188,75 @@ const showRain =
     })}
   </div>
 )}
-    </div>
   </div>
+{/* graph half */}
+<div className="flex-1 backdrop-blur-md bg-white/20 rounded-2xl p-6 shadow-xl">
+  <h3 className="mb-4 text-lg font-semibold text-white">Temperature Trend</h3>
+
+  {weather && weather.forecast?.forecastday && (
+    <Line
+      data={{
+        labels: weather.forecast.forecastday.map((day: any) =>
+          new Date(day.date).toLocaleDateString(undefined, { weekday: 'short' })
+        ),
+        datasets: [
+          {
+            label: 'Max Temp (°C)',
+            data: weather.forecast.forecastday.map((day: any) => day.day.maxtemp_c),
+            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            tension: 0.3, // smooth curves
+          },
+          {
+            label: 'Min Temp (°C)',
+            data: weather.forecast.forecastday.map((day: any) => day.day.mintemp_c),
+            borderColor: 'rgb(54, 162, 235)',
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            tension: 0.3,
+          },
+        ],
+      }}
+      options={{
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top' as const,
+            labels: {
+              color: '#ffffff', // white legend text
+            },
+          },
+          title: {
+            display: true,
+            text: '7-Day Temperature Forecast',
+            color: '#ffffff', // white title
+            font: { size: 16, weight: 'bold' },
+          },
+          tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.8)', // dark tooltip
+            titleColor: '#ffffff',
+            bodyColor: '#ffffff',
+          },
+        },
+        scales: {
+          x: {
+            ticks: { color: '#ffffff' }, // X-axis labels
+            grid: { color: 'rgba(255,255,255,0.2)' },
+          },
+          y: {
+            ticks: { color: '#ffffff' }, // Y-axis labels
+            grid: { color: 'rgba(255,255,255,0.2)' },
+          },
+        },
+      }}
+    />
+  )}
+</div>
+</div>
+</div>
+{/* Footer */}
+<footer className="w-full text-center py-4 text-sm text-white opacity-70 mt-6">
+  © Kent Llavado — made with <span className="font-semibold">Next.js</span>, <span className="font-semibold">Tailwind CSS</span>, <span className="font-semibold">Chart.js</span>
+</footer>
 
 </main>
   )
