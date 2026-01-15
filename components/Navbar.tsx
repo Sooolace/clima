@@ -11,13 +11,11 @@ export default function Header({ onSearch }: HeaderProps) {
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-white/20 backdrop-blur">
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-        <Link href="/" className="text-xl font-bold text-white-900">
-          Clima 🌤️
-        </Link>
-
+        <Link href="/">
+      <img src="/climalogo.png" alt="Clima Logo" className="w-35"/>
+      </Link>
         {/* Search triggers Home */}
         <SearchBar onSearch={onSearch} />
-
         <ul className="hidden md:flex gap-8 text-sm font-medium text-white-900">
           <li>
             <Link href="#about">About</Link>

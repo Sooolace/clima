@@ -67,12 +67,30 @@ body {
 }
 /* CLEAR SKY */
 .bg-clear {
-  background: linear-gradient(180deg, #53a7f0, #00f2fe);
+  background: linear-gradient(
+      180deg,
+      #0d3b91 0%,
+      #1976d2 25%,
+      #4fc3f7 50%,
+      #b3e5fc 75%,
+      #e0f7fa 100%
+    ),
+    radial-gradient(circle at 50% 15%, rgba(255, 255, 255, 0.2), transparent 40%);
+  background-blend-mode: screen;
 }
+
 /* CLOUDY */
 .bg-cloudy {
-  background: linear-gradient(180deg, #bdc3c7, #2c3e50);
-}
+  background: linear-gradient(
+      180deg,
+      #0d3b91 0%,
+      #1976d2 25%,
+      #4fc3f7 50%,
+      #b3e5fc 75%,
+      #e0f7fa 100%
+    ),
+    radial-gradient(circle at 50% 15%, rgba(255, 255, 255, 0.2), transparent 40%);
+  background-blend-mode: screen;}
 
 /* RAINY */
 .bg-rainy {
@@ -96,7 +114,17 @@ body {
 
 /* CLEAR NIGHT SKY - dark midnight blue with subtle glow */
 .bg-night-clear {
-  background: linear-gradient(180deg, #0a0a3f, #1b1f4d);
+  background: linear-gradient(
+      180deg,
+      #00001a 0%,      /* pitch black at the very top (midnight) */
+      #0a0a3f 30%,     /* deep midnight blue */
+      #1b1f4d 60%,     /* lighter blue near horizon */
+      #2a2d57 80%,     /* subtle horizon glow */
+      #2f334f 100%     /* soft dark horizon */
+    ),
+    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.1), transparent 40%);
+  
+  background-blend-mode: screen;
 }
 
 /* CLOUDY NIGHT - deep gray/blue clouds covering the sky */

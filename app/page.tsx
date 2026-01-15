@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react';
 import SearchBar from '@/components/SearchBar'
 import WeatherCard from '@/components/WeatherCard'
 import Header from '@/components/Navbar';
@@ -12,11 +12,14 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [lastCondition, setLastCondition] = useState('')
-const condition =
+  const condition =
   weather?.current?.condition?.text || lastCondition
-const hour = parseInt(weather.location.localtime.split(' ')[1].split(':')[0])
-const isNight = hour >= 19 || hour < 6
-
+  const isNight = weather
+  ? (() => {
+      const hour = parseInt(weather.location.localtime.split(' ')[1].split(':')[0])
+      return hour >= 19 || hour < 6
+    })()
+  : false
 
 const bgClass = getWeatherBg(condition, isNight)
 
@@ -55,6 +58,47 @@ const showRain =
     }
   }
 
+  useEffect(() => {
+  // Check if geolocation is supported
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+
+        try {
+          setLoading(true);
+          setError('');
+
+          // Fetch weather using lat/lon
+          const res = await fetch(`/api/weather?lat=${latitude}&lon=${longitude}`);
+          const data = await res.json();
+
+          if (!res.ok) {
+            throw new Error(data.message || 'Failed to fetch weather');
+          }
+
+          setWeather(data);
+          setLastCondition(data.current.condition.text);
+          setCity(data.location.name); // display city name from API
+        } catch (err: any) {
+          setError(err.message);
+          setWeather(null);
+        } finally {
+          setLoading(false);
+        }
+      },
+      (err) => {
+        console.warn('Geolocation error:', err.message);
+        // fallback to default city if geolocation fails
+        fetchWeather('Manila'); 
+      }
+    );
+  } else {
+    // fallback if browser doesn't support geolocation
+    fetchWeather('Manila');
+  }
+}, []);
+
   const weekday = (dt: number) =>
     new Date(dt * 1000).toLocaleDateString(undefined, { weekday: 'short' })
 
@@ -74,9 +118,10 @@ const showRain =
   {/* CONTENT */}
   <Header onSearch={fetchWeather} />
 
-  <div className="relative z-10 w-full max-w-6xl mx-auto mt-8 flex flex-col lg:flex-row gap-8 items-start px-4">
- 
-      <div className="w-full lg:w-1/2 backdrop-blur-md bg-white/20 rounded-2xl p-6 shadow-xl">
+<div className="relative z-10 w-full max-w-6xl mx-auto mt-8 flex flex-col lg:flex-row gap-8 items-stretch px-4">
+
+    {/* left container (current weather) */}
+  <div className="w-full lg:w-1/2 h-full backdrop-blur-md bg-white/20 rounded-2xl p-6 shadow-xl">
       {/* center messages and avoid extra borders/background */}
       {loading && (
         <div className="mt-3 w-full flex items-center justify-center">
@@ -104,7 +149,7 @@ const showRain =
     </div>
 
     {/* right container (forecast) */}
-    <div className="w-full lg:w-1/2 backdrop-blur-md bg-white/20 rounded-2xl p-6 shadow-xl">
+<div className="w-full lg:w-1/2 h-full backdrop-blur-md bg-white/20 rounded-2xl p-6 shadow-xl">
       <h3 className="mb-4 text-lg font-semibold">7-Day Forecast</h3>
 
 {!weather && !loading && <p className="text-sm opacity-80">Forecast will appear here after a search.</p>}

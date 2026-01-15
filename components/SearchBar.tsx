@@ -71,7 +71,7 @@ export default function SearchBar({ onSearch, defaultCity = '' }: SearchBarProps
           value={city}
           onChange={(e) => setCity(e.target.value)}
           placeholder="Enter city name..."
-          className="flex-1 px-4 py-2 rounded-l-full focus:outline-none text-black"
+          className="flex-1 px-4 py-2 rounded-l-full focus:outline-none text-white"
         />
         <button
           type="submit"
