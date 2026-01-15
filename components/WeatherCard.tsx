@@ -1,16 +1,23 @@
 interface WeatherCardProps {
   data: {
-    location: { name: string; country: string }
+    location: {
+      name: string
+      country: string
+      localtime: string
+    }
     current: {
       temp_c: number
       feelslike_c: number
       humidity: number
       wind_kph: number
-      time: number
-      condition: { text: string; icon: string }
+      condition: {
+        text: string
+        icon: string
+      }
     }
   }
 }
+
 
 export default function WeatherCard({ data }: WeatherCardProps) {
   const { location, current } = data
@@ -28,7 +35,7 @@ export default function WeatherCard({ data }: WeatherCardProps) {
         alt={current.condition.text}
         className="mx-auto"
       />
-
+      <p className="font-semibold">{location.localtime}</p>
       {/* Temperature */}
       <p className="text-4xl md:text-5xl font-bold mt-2">
         {Math.round(current.temp_c)}°C

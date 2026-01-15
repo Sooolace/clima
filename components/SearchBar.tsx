@@ -1,6 +1,8 @@
 'use client'
 
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect, FormEvent, useRef } from 'react'
+import { FaSearch } from 'react-icons/fa';
+
 
 interface SearchBarProps {
   onSearch: (city: string) => void
@@ -17,6 +19,19 @@ export default function SearchBar({ onSearch, defaultCity = '' }: SearchBarProps
   const [city, setCity] = useState(defaultCity)
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [showDropdown, setShowDropdown] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setShowDropdown(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   // Fetch suggestions when user types
   useEffect(() => {
@@ -49,7 +64,7 @@ export default function SearchBar({ onSearch, defaultCity = '' }: SearchBarProps
   }
 
   return (
-    <div className="relative w-full max-w-md">
+    <div ref={containerRef} className="relative w-full max-w-md">
       <form onSubmit={handleSubmit} className="flex w-full">
         <input
           type="text"
@@ -60,9 +75,9 @@ export default function SearchBar({ onSearch, defaultCity = '' }: SearchBarProps
         />
         <button
           type="submit"
-          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-r-full font-semibold transition-colors"
+          className="bg-sky-900 hover:bg-sky-950 text-white px-6 py-2 rounded-r-full font-semibold transition-colors"
         >
-          Search
+          <FaSearch />
         </button>
       </form>
 

@@ -67,9 +67,8 @@ body {
 }
 /* CLEAR SKY */
 .bg-clear {
-  background: linear-gradient(180deg, #4facfe, #00f2fe);
+  background: linear-gradient(180deg, #53a7f0, #00f2fe);
 }
-
 /* CLOUDY */
 .bg-cloudy {
   background: linear-gradient(180deg, #bdc3c7, #2c3e50);
@@ -90,6 +89,43 @@ body {
   background: linear-gradient(180deg, #1e3a8a, #020617);
 }
 
+/* SNOW DAY */
+.bg-snow {
+  background: linear-gradient(180deg, #dfe9f3, #ffffff);
+}
+
+/* CLEAR NIGHT SKY - dark midnight blue with subtle glow */
+.bg-night-clear {
+  background: linear-gradient(180deg, #0a0a3f, #1b1f4d);
+}
+
+/* CLOUDY NIGHT - deep gray/blue clouds covering the sky */
+.bg-night-cloudy {
+  background: linear-gradient(180deg, #1c2a3b, #0f161f);
+}
+
+/* RAINY NIGHT - dark bluish gray, wet and heavy */
+.bg-night-rainy {
+  background: linear-gradient(180deg, #111f2d, #060b12);
+}
+
+/* STORM NIGHT - very dark with a slight ominous hue */
+.bg-night-storm {
+  background: linear-gradient(180deg, #000000, #0a0a0a);
+}
+
+/* DEFAULT NIGHT - generic dark night sky */
+.bg-night-default {
+  background: linear-gradient(180deg, #050f22, #000000);
+}
+
+/* SNOW NIGHT - cold, dark grayish blue, snowy feel */
+.bg-night-snow {
+  background: linear-gradient(180deg, #1b2b38, #0b141d);
+}
+
+
+
 .background-layer {
   position: absolute;
   inset: 0;
@@ -97,6 +133,10 @@ body {
   z-index: -2; /* behind your content */
 }
 
-.clouds, .rain {
-  z-index: -1; /* overlays between content & background */
+.clouds,
+.rain {
+  position: absolute;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
 }

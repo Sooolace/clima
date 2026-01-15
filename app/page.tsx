@@ -14,14 +14,18 @@ export default function Home() {
   const [lastCondition, setLastCondition] = useState('')
 const condition =
   weather?.current?.condition?.text || lastCondition
+const hour = parseInt(weather.location.localtime.split(' ')[1].split(':')[0])
+const isNight = hour >= 19 || hour < 6
 
-const bgClass = getWeatherBg(condition)
+
+const bgClass = getWeatherBg(condition, isNight)
+
+console.log('condition:', condition, 'isNight:', isNight, 'bgClass:', bgClass)
 
 const showClouds =
   condition.toLowerCase().includes('cloud') ||
   condition.toLowerCase().includes('cloudy') ||
-  condition.toLowerCase().includes('overcast')||
-  condition.toLowerCase().includes('clear')
+  condition.toLowerCase().includes('overcast')
 const showRain =
   condition.toLowerCase().includes('rain') ||
   condition.toLowerCase().includes('drizzle') ||
@@ -55,18 +59,23 @@ const showRain =
     new Date(dt * 1000).toLocaleDateString(undefined, { weekday: 'short' })
 
   return (
-    
 <main
-  className={`relative min-h-screen transition-all duration-700 ${bgClass} 
-    ${showClouds ? 'clouds' : ''} 
-    ${showRain ? 'rain' : ''} 
-    flex flex-col items-center justify-center px-4 text-white`}
+  className="relative min-h-screen 
+    flex flex-col items-center justify-center px-4 text-white overflow-hidden"
 >
+  <div
+    className={`absolute inset-0 -z-10 transition-all duration-700 ${bgClass} 
+      ${showClouds ? 'clouds' : ''} 
+      ${showRain ? 'rain' : ''}`
+    }
+    aria-hidden
+  />  
 
+  {/* CONTENT */}
   <Header onSearch={fetchWeather} />
 
-  <div className="w-full max-w-6xl mx-auto mt-8 flex flex-col lg:flex-row gap-8 items-start">
-  
+  <div className="relative z-10 w-full max-w-6xl mx-auto mt-8 flex flex-col lg:flex-row gap-8 items-start px-4">
+ 
       <div className="w-full lg:w-1/2 backdrop-blur-md bg-white/20 rounded-2xl p-6 shadow-xl">
       {/* center messages and avoid extra borders/background */}
       {loading && (
