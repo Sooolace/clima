@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect, FormEvent, useRef } from 'react'
-import { FaSearch } from 'react-icons/fa';
-
+import { FaSearch, FaMapMarkerAlt } from 'react-icons/fa'
 
 interface SearchBarProps {
   onSearch: (city: string) => void
@@ -19,6 +18,7 @@ export default function SearchBar({ onSearch, defaultCity = '' }: SearchBarProps
   const [city, setCity] = useState(defaultCity)
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [showDropdown, setShowDropdown] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Close dropdown when clicking outside
@@ -64,33 +64,48 @@ export default function SearchBar({ onSearch, defaultCity = '' }: SearchBarProps
   }
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-md">
-      <form onSubmit={handleSubmit} className="flex w-full">
+    <div ref={containerRef} className="relative w-full">
+      <form
+        onSubmit={handleSubmit}
+        className={`flex w-full items-center overflow-hidden rounded-xl bg-white/10 backdrop-blur-sm border transition-all duration-200 ${
+          isFocused ? 'border-white/40 ring-2 ring-white/20' : 'border-white/20 hover:border-white/30'
+        }`}
+      >
+        <span className="pl-4 text-white/60">
+          <FaMapMarkerAlt className="h-4 w-4" />
+        </span>
         <input
           type="text"
           value={city}
           onChange={(e) => setCity(e.target.value)}
-          placeholder="Enter city name..."
-          className="flex-1 px-4 py-2 rounded-l-full focus:outline-none text-white"
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          placeholder="Search city..."
+          className="min-w-0 flex-1 bg-transparent px-3 py-3 text-white placeholder-white/50 focus:outline-none text-sm sm:text-base"
         />
         <button
           type="submit"
-          className="bg-sky-900 hover:bg-sky-950 text-white px-6 py-2 rounded-r-full font-semibold transition-colors"
+          className="flex items-center justify-center h-11 w-11 sm:w-12 bg-white/20 hover:bg-white/30 text-white transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
         >
-          <FaSearch />
+          <FaSearch className="h-4 w-4" />
         </button>
       </form>
 
       {/* Suggestions dropdown */}
       {showDropdown && suggestions.length > 0 && (
-        <ul className="absolute z-50 w-full mt-1 bg-white rounded-lg shadow-lg max-h-60 overflow-auto text-black">
+        <ul className="absolute z-50 w-full mt-2 rounded-xl overflow-hidden bg-white/95 backdrop-blur-xl border border-white/20 shadow-xl max-h-60 overflow-auto">
           {suggestions.map((s, idx) => (
             <li
               key={idx}
-              className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
+              className="px-4 py-3 hover:bg-white/80 cursor-pointer text-gray-800 text-sm transition-colors flex items-center gap-2 border-b border-gray-100 last:border-0"
               onClick={() => handleSelect(s.name)}
             >
-              {s.name}, {s.region ? s.region + ', ' : ''}{s.country}
+              <FaMapMarkerAlt className="h-3 w-3 text-sky-500 flex-shrink-0" />
+              <span>
+                {s.name}
+                {s.region && `, ${s.region}`}
+                {s.country && ` — ${s.country}`}
+              </span>
             </li>
           ))}
         </ul>

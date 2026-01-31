@@ -157,8 +157,35 @@ body {
 .background-layer {
   position: absolute;
   inset: 0;
-  transition: opacity 1s ease-in-out;
-  z-index: -2; /* behind your content */
+  z-index: -2;
+}
+
+/* Cross-fade + blur transition for background switches (550ms, 4px blur) */
+@keyframes bgFadeOut {
+  from {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+@keyframes bgFadeIn {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+.bg-transition-exit {
+  animation: bgFadeOut 550ms ease-out forwards;
+}
+.bg-transition-enter {
+  animation: bgFadeIn 550ms ease-out;
 }
 
 .clouds,

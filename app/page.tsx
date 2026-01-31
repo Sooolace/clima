@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import SearchBar from '@/components/SearchBar'
 import WeatherCard from '@/components/WeatherCard'
 import Header from '@/components/Navbar';
@@ -9,6 +9,8 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
+type BgState = { bg: string; clouds: boolean; rain: boolean };
 
 export default function Home() {
   const [city, setCity] = useState('')
@@ -25,18 +27,34 @@ export default function Home() {
     })()
   : false
 
-const bgClass = getWeatherBg(condition, isNight)
+  const bgClass = getWeatherBg(condition, isNight)
+  const showClouds =
+    condition.toLowerCase().includes('cloud') ||
+    condition.toLowerCase().includes('cloudy') ||
+    condition.toLowerCase().includes('overcast')
+  const showRain =
+    condition.toLowerCase().includes('rain') ||
+    condition.toLowerCase().includes('drizzle') ||
+    condition.toLowerCase().includes('shower')
 
-console.log('condition:', condition, 'isNight:', isNight, 'bgClass:', bgClass)
+  const [currBg, setCurrBg] = useState<BgState>(() => ({ bg: bgClass, clouds: showClouds, rain: showRain }))
+  const [prevBg, setPrevBg] = useState<BgState | null>(null)
+  const lastAppliedRef = useRef<BgState>({ bg: bgClass, clouds: showClouds, rain: showRain })
 
-const showClouds =
-  condition.toLowerCase().includes('cloud') ||
-  condition.toLowerCase().includes('cloudy') ||
-  condition.toLowerCase().includes('overcast')
-const showRain =
-  condition.toLowerCase().includes('rain') ||
-  condition.toLowerCase().includes('drizzle') ||
-  condition.toLowerCase().includes('shower')
+  useEffect(() => {
+    const next: BgState = { bg: bgClass, clouds: showClouds, rain: showRain }
+    if (
+      lastAppliedRef.current.bg !== next.bg ||
+      lastAppliedRef.current.clouds !== next.clouds ||
+      lastAppliedRef.current.rain !== next.rain
+    ) {
+      setPrevBg(lastAppliedRef.current)
+      setCurrBg(next)
+      lastAppliedRef.current = next
+      const id = setTimeout(() => setPrevBg(null), 550)
+      return () => clearTimeout(id)
+    }
+  }, [bgClass, showClouds, showRain])
 
 
   const fetchWeather = async (cityName: string) => {
@@ -111,13 +129,19 @@ const showRain =
   className="relative min-h-screen 
     flex flex-col items-center justify-center px-4 text-white overflow-hidden"
 >
-  <div
-    className={`absolute inset-0 -z-10 transition-all duration-700 ${bgClass} 
-      ${showClouds ? 'clouds' : ''} 
-      ${showRain ? 'rain' : ''}`
-    }
-    aria-hidden
-  />  
+  <div className="absolute inset-0 -z-10 overflow-hidden" aria-hidden>
+    {/* Current background (fades in when it changes) */}
+    <div
+      key={`${currBg.bg}-${currBg.clouds}-${currBg.rain}`}
+      className={`absolute inset-0 bg-transition-enter background-layer ${currBg.bg} ${currBg.clouds ? 'clouds' : ''} ${currBg.rain ? 'rain' : ''}`}
+    />
+    {/* Previous background (top layer, cross-fades out with blur) */}
+    {prevBg && (
+      <div
+        className={`absolute inset-0 bg-transition-exit background-layer ${prevBg.bg} ${prevBg.clouds ? 'clouds' : ''} ${prevBg.rain ? 'rain' : ''}`}
+      />
+    )}
+  </div>  
 
   {/* CONTENT */}
   <Header onSearch={fetchWeather} />
@@ -253,11 +277,12 @@ const showRain =
 </div>
 </div>
 </div>
+
+
 {/* Footer */}
 <footer className="w-full text-center py-4 text-sm text-white opacity-70 mt-6">
   © Kent Llavado — made with <span className="font-semibold">Next.js</span>, <span className="font-semibold">Tailwind CSS</span>, <span className="font-semibold">Chart.js</span>
-</footer>
-
+</footer> 
 </main>
   )
 }
